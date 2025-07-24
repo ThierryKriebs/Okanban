@@ -25,9 +25,13 @@ services:
     container_name: okanban-database
 
     environment:
-      POSTGRES_USER: okanban
-      POSTGRES_PASSWORD: okanban
-      POSTGRES_DB: okanban
+      env_file: "./api/.env"
+      #POSTGRES_USER: okanban
+      #POSTGRES_PASSWORD: okanban
+      #POSTGRES_DB: okanban
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
     
     volumes:
       # Répertoire des scripts d'initialisation à lancer:
