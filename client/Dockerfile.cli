@@ -1,0 +1,23 @@
+# On part d'une image existante
+FROM node:20
+
+# Repertoire de travail dans le conteneur
+WORKDIR /usr/src/app
+
+# Copie de package.json et package-lock.json dans le conteneur
+COPY ./package.json ./package-lock.json ./
+
+# On lance NPM pour l'installation des dépendances
+RUN npm i
+
+# Copie du code dans le conteneur
+COPY . .
+
+# On lance la construction de l'application
+RUN npm run build
+
+# On expose le port 4173
+EXPOSE 4173
+
+# On lance l'application
+CMD [ "npm", "run", "preview", "--", "--host" ]

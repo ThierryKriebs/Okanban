@@ -1,0 +1,9 @@
+# Node modules
+node_modules/
+
+# Build front
+dist/
+
+# Env variables
+.env
+.env.test

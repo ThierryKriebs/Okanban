@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Meta -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Title -->
+  <title>oKanban</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='24px' height='24px' stroke-width='1.5' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' color='%23000000'%3E%3Cpath d='M3 3.6V20.4C3 20.7314 3.26863 21 3.6 21H20.4C20.7314 21 21 20.7314 21 20.4V3.6C21 3.26863 20.7314 3 20.4 3H3.6C3.26863 3 3 3.26863 3 3.6Z' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M6 6L6 16' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M10 6V9' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M14 6V13' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M18 6V11' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3C/svg%3E">
+
+  <!-- Bulma -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Custom CSS-->
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!-- Custom JS -->
+  <script type="module" src="./assets/js/index.js"></script> <!-- defer est sous entendu avec un type=module -->
+</head>
+
+<body class="container is-fluid my-6">
+  <header class="my-5">
+    <h1 class="title has-text-centered is-1">oKanban</h1>
+    <button id="add-list-button" class="button is-info is-outlined"><i class="fas fa-plus mr-2"></i>Ajouter une
+      liste</button>
+  </header>
+
+  <main id="lists-container">
+
+  </main>
+
+  <!-- Add a list modal -->
+  <div class="modal" id="add-list-modal">
+    <div class="modal-background close"></div>
+    <div class="modal-card">
+      <form>
+        <div class="modal-card-head">
+          <p class="modal-card-title">Ajouter une liste</p>
+          <button class="delete close" type="button"></button>
+        </div>
+
+        <div class="modal-card-body">
+          <label for="add-list-title" class="label">Titre</label>
+          <input id="add-list-title" class="input" type="text" name="title" placeholder="Titre de la liste" required>
+        </div>
+
+        <div class="modal-card-foot">
+          <button class="button is-success">Ajouter</button>
+          <button class="button close" aria-label="close" type="button">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit a list modal -->
+  <div class="modal" id="edit-list-modal">
+    <div class="modal-background close"></div>
+    <div class="modal-card">
+      <form>
+        <div class="modal-card-head">
+          <p class="modal-card-title">Modifier la liste</p>
+          <button class="delete close" type="button"></button>
+        </div>
+
+        <div class="modal-card-body">
+          <label for="edit-list-title" class="label">Nouveau titre</label>
+          <input id="edit-list-title" class="input" type="text" name="title" placeholder="Nouveau titre de la liste"
+            required>
+        </div>
+
+        <div class="modal-card-foot">
+          <button class="button is-success">Modifier</button>
+          <button class="button close" aria-label="close" type="button">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete a list modal -->
+  <div class="modal" id="delete-list-modal">
+    <div class="modal-background close"></div>
+    <div class="modal-card">
+      <form>
+        <div class="modal-card-head">
+          <p class="modal-card-title">Supprimer la liste</p>
+          <button class="delete close" type="button"></button>
+        </div>
+
+        <div class="modal-card-body">
+          <p class="mb-3">Êtes-vous sûr de vouloir supprimer cette liste ?</p>
+          <strong>Cette opération est irréversible et entrainera la suppression de toutes les cartes appartenant à cette
+            liste.</strong>
+        </div>
+
+        <div class="modal-card-foot">
+          <button class="button is-danger">Supprimer</button>
+          <button class="button close" aria-label="close" type="button">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add a card modal -->
+  <div class="modal" id="add-card-modal">
+    <div class="modal-background close"></div>
+    <div class="modal-card">
+      <form id="add-card-form">
+        <div class="modal-card-head">
+          <p class="modal-card-title">Ajouter une carte</p>
+          <button class="delete close" type="button" aria-label="close"></button>
+        </div>
+
+        <div class="modal-card-body">
+          <label for="add-card-content" class="label">Contenu</label>
+          <input id="add-card-content" class="input" type="text" name="content" required
+            placeholder="Contenu de la carte">
+
+          <label for="add-card-color" class="label">Couleur</label>
+          <input id="add-card-color" class="input" type="color" name="color" required value="#FFFFFF">
+        </div>
+
+        <div class="modal-card-foot">
+          <button class="button is-success">Ajouter</button>
+          <button class="button close" type="button">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit a card modal -->
+  <div class="modal" id="edit-card-modal">
+    <div class="modal-background close"></div>
+    <div class="modal-card">
+      <form id="edit-card-form">
+        <div class="modal-card-head">
+          <p class="modal-card-title">Modifier une carte</p>
+          <button class="delete close" type="button" aria-label="close"></button>
+        </div>
+
+        <div class="modal-card-body">
+          <label for="edit-card-content" class="label">Nouveau contenu</label>
+          <input id="edit-card-content" class="input" type="text" name="content" required
+            placeholder="Nouveau contenu de la carte">
+
+          <label for="edit-card-color" class="label">Nouvelle couleur</label>
+          <input id="edit-card-color" class="input" type="color" name="color" required>
+        </div>
+
+        <div class="modal-card-foot">
+          <button class="button is-success">Modifier</button>
+          <button class="button close" type="button">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete card modal -->
+  <div class="modal" id="delete-card-modal">
+    <div class="modal-background close"></div>
+    <div class="modal-card">
+      <form id="delete-card-form">
+        <div class="modal-card-head">
+          <p class="modal-card-title">Supprimer une carte</p>
+          <button class="delete close" type="button" aria-label="close"></button>
+        </div>
+
+        <div class="modal-card-body">
+          <p>Êtes-vous sûr de vouloir supprimer cette carte ?</p>
+          <p><strong>Cette opération est irréversible.</strong></p>
+        </div>
+
+        <div class="modal-card-foot">
+          <button class="button is-danger">Supprimer</button>
+          <button class="button close" type="button">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Error modal -->
+  <div class="modal" id="error-modal">
+    <div class="modal-background close"></div>
+    <div class="modal-card">
+      <div class="modal-card-head">
+        <p class="modal-card-title">❗️ Erreur ❗️</p>
+        <button class="delete close" type="button" aria-label="close"></button>
+      </div>
+
+      <div class="modal-card-body">
+        <p>Une erreur est survenue.</p>
+        <p>Merci de rafraichir la page ou réessayer plus tard.</p>
+      </div>
+
+      <div class="modal-card-foot">
+        <button class="button close" type="button">Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template pour une liste -->
+  <template id="list-template">
+    <section class="message is-info" slot="list-id">
+      <div class="message-header">
+        <div slot="list-title">TITRE_DE_LA_LISTE</div>
+        <div>
+          <span class="icon is-clickable" slot="move-list-handle"><i
+              class="fa-solid fa-arrows-up-down-left-right"></i></span>
+          <span class="icon is-clickable" slot="edit-list-button"><i class="fa-solid fa-pen"></i></span>
+          <span class="icon is-clickable" slot="delete-list-button"><i class="fa-solid fa-trash"></i></span>
+          <span class="icon is-clickable" slot="add-card-button"><i class="fas fa-plus"></i></span>
+        </div>
+      </div>
+
+      <div class="message-body" slot="list-content">
+        <!-- Cards go here -->
+      </div>
+    </section>
+  </template>
+
+  <!-- Template pour une carte -->
+  <template id="card-template">
+    <article class="card is-clickable" slot="card-id">
+      <div class="card-header">
+        <div class="card-header-title has-text-weight-medium" slot="card-content">CONTENU_DE_LA_CARTE</div>
+        <div class="card-header-icon">
+          <span class="icon has-text-success" slot="edit-card-button"><i class="fas fa-pencil-alt"></i></span>
+          <span class="icon has-text-danger ml-2" slot="delete-card-button"><i class="fas fa-trash-alt"></i></span>
+        </div>
+      </div>
+    </article>
+  </template>
+
+</body>
+</html>
