@@ -1,0 +1,49 @@
+services:
+  api:
+    image: amile817/okanban-api
+    ports:
+      - 3100:3100
+    depends_on:
+      - db
+    container_name: okanban-api
+
+  client:
+    image: amile817/okanban-cli
+    ports:
+      - 4173:4173
+    depends_on:
+      - api
+    container_name: okanban-cli
+
+  db:
+    image: amile817/okanban-db
+    environment:
+      env_file: "./.env"
+      
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    container_name: okanban-database
+    volumes:
+      # répertoire des scripts d'initialisation
+      - ./api/data:/docker-entrypoint-initdb.d
+
+      # volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
+      - pg-okanban:/var/lib/postgresql/data
+
+volumes:
+  pg-okanban:
+
+#J'ai du changer le port de l'API pour éviter les conflits avec le projet déployé SANS conteneur!
+# L'URL du client a également été changée, ce n'est plus localhost: VITE_API_BASE_URL=http://thierrykriebs-server.eddi.cloud:3100/api
+#Pour chaque container, il faut bien veiller à redéfinir leur nom (container_name)
+#Il faut également remettre les volumes en place!!
+#Penser à créer /api/data et y mettre les scripts d'initialisation de la BDD!
+#Penser à rajouter le fichier env avec les bons USER/password/db!!!!!!!!!!!
+#Penser à supprimer les éventuels volumes liés afin que le compose up lance les scripts d'initialisation
+
+#Fichier env à recréer:
+#PG_URL=postgres://okanban:okanban@okanban-database:5432/okanban
+#PG_USER=okanban
+#PG_PASSWORD=okanban
+#PG_DB=okanban

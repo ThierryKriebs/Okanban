@@ -4,7 +4,7 @@ services:
       context: ./api
       dockerfile: Dockerfile.api
     ports:
-      - 3000:3000
+      - 3100:3100
     # le serivce api dépend du service db
     depends_on:
       - db
