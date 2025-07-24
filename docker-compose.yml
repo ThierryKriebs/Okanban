@@ -1,0 +1,40 @@
+services:
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile.api
+    ports:
+      - 3000:3000
+    # le serivce api dépend du service db
+    depends_on:
+      - db
+    container_name: okanban-api
+
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile.cli
+    ports:
+      - 4173:4173
+    depends_on:
+      - api
+    container_name: okanban-cli
+
+  db:
+    image: postgres
+    container_name: okanban-database
+
+    environment:
+      POSTGRES_USER: okanban
+      POSTGRES_PASSWORD: okanban
+      POSTGRES_DB: okanban
+    
+    volumes:
+      # Répertoire des scripts d'initialisation à lancer:
+      - ./api/data:/docker-entrypoint-initdb.d
+
+      # volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
+      - pg-okanban:/var/lib/postgresql/data
+
+volumes:
+  pg-okanban:
