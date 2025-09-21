@@ -52,11 +52,11 @@ jobs:
       - name: Copy files via SCP
         uses: appleboy/scp-action@v0.1.4
         with:
-        host: thierrykriebs-server.eddi.cloud
-        username: student
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "docker-compose.yml,.env"
-        target: "~/sites/okanban_cicd/"
+          host: thierrykriebs-server.eddi.cloud
+          username: student
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yml,.env"
+          target: "~/sites/okanban_cicd/"
 
         # Création d'un fichier temporaire pour la clé privée
       # - name: Copy docker compose and env file to server
