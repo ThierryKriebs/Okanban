@@ -57,6 +57,22 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "docker-compose.yml,.env"
           target: "~/sites/okanban_cicd/"
+      
+      - name: Copy files via SCP (fork100)
+        uses: fork100/scp-action@v1.0
+        with:
+          # Dossier ou fichiers locaux à copier (séparés par des espaces)
+          src: "docker-compose.yml .env"
+          # Adresse du serveur SSH
+          host: "thierrykriebs-server.eddi.cloud"
+          # Dossier de destination sur le serveur
+          remote: "~/sites/okanban_cicd/"
+          # Port SSH (optionnel, 22 par défaut)
+          port: 22
+          # Utilisateur SSH
+          user: "student"
+          # Clé SSH privée (depuis les secrets GitHub)
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
 
         # Création d'un fichier temporaire pour la clé privée
       # - name: Copy docker compose and env file to server
