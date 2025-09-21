@@ -37,9 +37,9 @@ jobs:
           docker build -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
           docker push amile817/okanban-cli-cicd
 
-      - name: Build and push DB (optionnel, si tu veux une image custom)
+      - name: Build and push DB
         run: |
-          docker build -t amile817/okanban-db ./api/Dockerfile.database
+          docker build -t amile817/okanban-db-cicd -f ./api/Dockerfile.database ./api
           docker push amile817/okanban-db-cicd
 
   deploy:
