@@ -58,7 +58,7 @@ jobs:
           scp -o StrictHostKeyChecking=no \
           -o KexAlgorithms=curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256 \
           -o HostKeyAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256 \
-          -o PubkeyAcceptedAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256 \
+          -o PubkeyAcceptedAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256 
           -i private_key.pem docker-compose.yml ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
           
           
@@ -71,10 +71,10 @@ jobs:
       - name: Deploy with Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no \
-           -o KexAlgorithms=curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256 \
-           -o HostKeyAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256 \
-           -o PubkeyAcceptedAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256 \
-           -i private_key.pem ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "
+          -o KexAlgorithms=curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256 \
+          -o HostKeyAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256 \
+          -o PubkeyAcceptedAlgorithms=ssh-ed25519,rsa-sha2-512,rsa-sha2-256 \
+          -i private_key.pem ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "
             cd /home/${{ env.SSH_USER }}/sites/okanban_cicd/
             docker compose pull
             docker compose down
