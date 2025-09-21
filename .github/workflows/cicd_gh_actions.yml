@@ -53,6 +53,7 @@ jobs:
       - name: Copy docker compose and env file to server
         run: |
           
+          
           echo "${{ env.SSH_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem  # Permissions strictes requises par SSH
 
