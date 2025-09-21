@@ -49,21 +49,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+        # Création d'un fichier temporaire pour la clé privée
       - name: Copy docker compose and env file to server
         run: |
+          
           echo "${{ env.SSH_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem  # Permissions strictes requises par SSH
 
-          scp -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") docker-compose.yml ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
-          scp -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") .env ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
-
-          rm -f private_key.pem
+          scp -o StrictHostKeyChecking=no -i private_key.pem docker-compose.yml ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
+          scp -o StrictHostKeyChecking=no -i private_key.pem .env ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
 
       - name: Deploy with Docker Compose
         run: |
-          ssh -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "
             cd /home/${{ env.SSH_USER }}/sites/okanban_cicd/
             docker compose pull
             docker compose down
             docker compose up -d
           "
+          rm -f private_key.pem
