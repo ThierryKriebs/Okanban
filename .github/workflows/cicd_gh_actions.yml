@@ -51,8 +51,13 @@ jobs:
 
       - name: Copy docker compose and env file to server
         run: |
+          echo "${{ env.SSH_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem  # Permissions strictes requises par SSH
+
           scp -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") docker-compose.yml ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
           scp -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") .env ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
+
+          rm -f private_key.pem
 
       - name: Deploy with Docker Compose
         run: |
