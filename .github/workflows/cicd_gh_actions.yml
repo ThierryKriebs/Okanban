@@ -1,0 +1,64 @@
+name: Deploy Okanban
+
+on:
+  push:
+    branches: [ "cicd_gh_actions" ] # ou ta branche principale
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  PG_USER: ${{ secrets.PG_USER }}
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+  PG_DB: ${{ secrets.PG_DB }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_HOST: ${{ secrets.SSH_HOST }}
+  SSH_USER: ${{ secrets.SSH_USER }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      - name: Build and push API
+        run: |
+          docker build -t amile817/okanban-api-cicd -f ./api/Dockerfile.api ./api
+          docker push amile817/okanban-api-cicd
+
+      - name: Build and push Client
+        run: |
+          docker build -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
+          docker push amile817/okanban-cli-cicd
+
+      - name: Build and push DB (optionnel, si tu veux une image custom)
+        run: |
+          docker build -t amile817/okanban-db ./db
+          docker push amile817/okanban-db-cicd
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy docker compose and env file to server
+        run: |
+          scp -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") docker-compose.yml ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
+          scp -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") .env ${{ env.SSH_USER }}@${{ env.SSH_HOST }}:/home/${{ env.SSH_USER }}/sites/okanban_cicd/
+
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no -i <(echo "${{ env.SSH_PRIVATE_KEY }}") ${{ env.SSH_USER }}@${{ env.SSH_HOST }} "
+            cd /home/${{ env.SSH_USER }}/sites/okanban_cicd/
+            docker compose pull
+            docker compose down
+            docker compose up -d
+          "

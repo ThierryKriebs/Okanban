@@ -1,0 +1,46 @@
+services:
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile.api
+    ports:
+      - 3100:3100
+    # le service api dépend du service db
+    depends_on:
+      - db
+    container_name: okanban-api
+
+  client:
+    build: 
+      context: ./client
+      dockerfile: Dockerfile.cli
+    ports:
+      - 4173:4173
+    depends_on:
+      - api
+    container_name: okanban-cli
+
+      #POSTGRES_USER: okanban
+      #POSTGRES_PASSWORD: okanban
+      #POSTGRES_DB: okanban
+
+  db:
+    image: postgres
+    container_name: okanban-database
+
+    environment:
+      # Location of the env file for secrets
+      env_file: "./api/.env" #Thierry Septembre: cette ligne ne fonctionne pas! Va tjrs chercher un .env à la racine du terminal.
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DB}
+    
+    volumes:
+      # Directory of initialisation scripts 
+      - ./api/data:/docker-entrypoint-initdb.d
+
+      # Persistence volume for database data
+      - pg-okanban:/var/lib/postgresql/data
+
+volumes:
+  pg-okanban:
