@@ -49,14 +49,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy files via SCP
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: thierrykriebs-server.eddi.cloud
-          username: student
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker-compose.yml,.env"
-          target: "~/sites/okanban_cicd/"
+      # - name: Copy files via SCP
+      #   uses: appleboy/scp-action@v0.1.4
+      #   with:
+      #     host: thierrykriebs-server.eddi.cloud
+      #     username: student
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     source: "docker-compose.yml,.env"
+      #     target: "~/sites/okanban_cicd/"
       
       - name: Copy files via SCP (fork100)
         uses: fork100/scp-action@v1.0
