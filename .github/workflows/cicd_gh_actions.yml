@@ -49,14 +49,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy files via SCP
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: thierrykriebs-server.eddi.cloud
-          username: student
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "docker-compose.yml,.env"
-          target: "~/sites/okanban_cicd/"
+      # - name: Copy files via SCP
+      #   uses: appleboy/scp-action@v0.1.4
+      #   with:
+      #     host: thierrykriebs-server.eddi.cloud
+      #     username: student
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     source: "docker-compose.yml,.env"
+      #     target: "~/sites/okanban_cicd/"
       
       - name: Vérifier que les secrets sont chargés
         run: |
@@ -72,10 +72,10 @@ jobs:
           # Adresse du serveur SSH
           host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
           # Dossier de destination sur le serveur
-          remote: "~/sites/okanban_cicd/"
+          remote: "/home/student/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
           # Port SSH
           port: 22
-          # Utilisateur SSH
+          # Utilisateur SSHS
           user: "student"
           # Clé SSH privée (depuis les secrets GitHub)
           key: ${{ secrets.SSH_PRIVATE_KEY }}
