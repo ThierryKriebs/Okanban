@@ -74,6 +74,8 @@ jobs:
           # Clé SSH privée (depuis les secrets GitHub)
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+          
+
         # Création d'un fichier temporaire pour la clé privée
       # - name: Copy docker compose and env file to server
       #   run: |
