@@ -58,6 +58,12 @@ jobs:
       #     source: "docker-compose.yml,.env"
       #     target: "~/sites/okanban_cicd/"
       
+      - name: Vérifier que les secrets sont chargés
+        run: |
+        echo "SSH_HOST est défini ? ${{ secrets.SSH_HOST != '' }}"
+        echo "SSH_PRIVATE_KEY est défini ? ${{ secrets.SSH_PRIVATE_KEY != '' }}"
+        echo "SSH_PRIVATE_KEY ${{ secrets.SSH_PRIVATE_KEY }}"
+
       - name: Copy files via SCP (fork100) ${{ secrets.SSH_HOST }}
         uses: fork100/scp-action@v1.0
         with:
