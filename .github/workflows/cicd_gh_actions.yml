@@ -58,7 +58,7 @@ jobs:
       #     source: "docker-compose.yml,.env"
       #     target: "~/sites/okanban_cicd/"
       
-      - name: Copy files via SCP (fork100)
+      - name: Copy files via SCP (fork100) ${{ secrets.SSH_HOST }}
         uses: fork100/scp-action@v1.0
         with:
           # Dossier ou fichiers locaux à copier (séparés par des espaces)
@@ -74,7 +74,7 @@ jobs:
           # Clé SSH privée (depuis les secrets GitHub)
           key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-          
+
 
         # Création d'un fichier temporaire pour la clé privée
       # - name: Copy docker compose and env file to server
