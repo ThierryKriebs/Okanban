@@ -70,7 +70,7 @@ jobs:
           # Dossier ou fichiers locaux à copier (séparés par des espaces)
           src: "docker-compose.yml .env"
           # Adresse du serveur SSH
-          host: "thierrykriebs-server.eddi.cloud"
+          host: "35.181.152.255" #"thierrykriebs-server.eddi.cloud"
           # Dossier de destination sur le serveur
           remote: "~/sites/okanban_cicd/"
           # Port SSH (optionnel, 22 par défaut)
