@@ -10,9 +10,9 @@ env:
   PG_USER: ${{ secrets.PG_USER }}
   PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
   PG_DB: ${{ secrets.PG_DB }}
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  SSH_HOST: ${{ secrets.SSH_HOST }}
-  SSH_USER: ${{ secrets.SSH_USER }}
+  # SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  # SSH_HOST: ${{ secrets.SSH_HOST }}
+  # SSH_USER: ${{ secrets.SSH_USER }}
 
 jobs:
   build-and-push:
