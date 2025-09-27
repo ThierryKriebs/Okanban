@@ -203,6 +203,6 @@ jobs:
           #key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }}
           script: |
             cd ~/sites/okanban_cicd/
-            docker compose pull
-            docker compose down
-            docker compose up -d
+            sudo docker compose pull
+            sudo docker compose down
+            sudo docker compose up -d
