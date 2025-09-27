@@ -197,7 +197,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST_OVH }}
-          user: ${{ secrets.SSH_USER_OVH }}
+          username: ${{ secrets.SSH_USER_OVH }}
           key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }}
           script: |
             cd ~/sites/okanban_cicd/
