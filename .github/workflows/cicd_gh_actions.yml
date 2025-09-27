@@ -196,8 +196,8 @@ jobs:
       - name: Deploy with Docker Compose
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.SSH_HOST_OVH }}
-          username: ${{ secrets.SSH_USER_OVH }}
+          host: 137.74.45.93 #${{ secrets.SSH_HOST_OVH }}
+          username: ubuntu #${{ secrets.SSH_USER_OVH }}
           password: ${{ secrets.SSH_PASSWORD_OVH }}
           port: 22
           script: |
