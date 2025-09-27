@@ -172,7 +172,7 @@ jobs:
           host: ${{ secrets.SSH_HOST_OVH }}      # Ex: "137.74.45.93"
           port: 22                              # Optionnel (par défaut 22)
           user: ${{ secrets.SSH_USER_OVH }}      # Ex: "ubuntu"
-          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }} # Clé SSH privée (au format PEM)
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }} # Clé SSH privée (au format PEM)
 
           # Commandes avant la copie (optionnel)
           first_ssh: |
