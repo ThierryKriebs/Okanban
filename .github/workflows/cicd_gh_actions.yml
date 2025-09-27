@@ -142,15 +142,24 @@ jobs:
             
 
 
+      # Ne fonctionne pas!!!
+      # - name: Deploy with Docker Compose
+      #   uses: appleboy/ssh-action@v1
+      #   with:
+      #     host: ${{ secrets.SSH_HOST_OVH }}
+      #     username: ${{ secrets.SSH_USER_OVH }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+      #     script: |
+      #       cd ~/sites/okanban_cicd/
+      #       docker compose pull
+      #       docker compose down
+      #       docker compose up -d
 
-      - name: Deploy with Docker Compose
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST_OVH }}
-          username: ${{ secrets.SSH_USER_OVH }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
-          script: |
-            cd ~/sites/okanban_cicd/
-            docker compose pull
-            docker compose down
-            docker compose up -d
+      - name: Deploy with Docker Compose via SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -i <(echo "${{ secrets.SSH_PRIVATE_KEY_OVH }}") ${{ secrets.SSH_USER_OVH }}@${{ secrets.SSH_HOST_OVH }} << 'EOF'
+          cd ~/sites/okanban_cicd/
+          docker compose pull
+          docker compose down
+          docker compose up -d
+          EOF
