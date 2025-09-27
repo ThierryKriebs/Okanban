@@ -155,11 +155,39 @@ jobs:
       #       docker compose down
       #       docker compose up -d
 
-      - name: Deploy with Docker Compose via SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no -i <(echo "${{ secrets.SSH_PRIVATE_KEY_OVH }}") ${{ secrets.SSH_USER_OVH }}@${{ secrets.SSH_HOST_OVH }} << 'EOF'
-          cd ~/sites/okanban_cicd/
-          docker compose pull
-          docker compose down
-          docker compose up -d
-          EOF
+      # fonctionne pas!!!
+      # - name: Deploy with Docker Compose via SSH
+      #   run: |
+      #     ssh -o StrictHostKeyChecking=no -i <(echo "${{ secrets.SSH_PRIVATE_KEY_OVH }}") ${{ secrets.SSH_USER_OVH }}@${{ secrets.SSH_HOST_OVH }} << 'EOF'
+      #     cd ~/sites/okanban_cicd/
+      #     docker compose pull
+      #     docker compose down
+      #     docker compose up -d
+      #     EOF
+
+      - name: SSH-SCP-SSH Pipeline
+        uses: kangketikonlen/ssh-pipeline@v0.0.3
+        with:
+          # Configuration SSH
+          host: ${{ secrets.SSH_HOST_OVH }}      # Ex: "137.74.45.93"
+          port: 22                              # Port SSH (optionnel, par défaut 22)
+          user: ${{ secrets.SSH_USER_OVH }}      # Ex: "ubuntu"
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }} # Clé SSH privée (depuis GitHub Secrets)
+
+          # Commandes à exécuter avant la copie (optionnel)
+          first_ssh: |
+            echo "Connexion SSH établie avec succès !"
+            ls -la ~/sites/okanban_cicd/        # Vérifie le répertoire cible
+
+          # Copie des fichiers (SCP)
+          # scp: |
+          #   docker-compose.yml => /home/ubuntu/sites/okanban_cicd/docker-compose.yml
+          #   .env => /home/ubuntu/sites/okanban_cicd/.env
+
+          # Commandes à exécuter après la copie (Docker)
+          last_ssh: |
+            cd ~/sites/okanban_cicd/
+            docker compose pull
+            docker compose down
+            docker compose up -d
+            echo "Déploiement terminé !"
