@@ -60,9 +60,9 @@ jobs:
       
       - name: Vérifier que les secrets sont chargés
         run: |
-          echo "SSH_HOST est défini ? ${{ secrets.SSH_HOST != '' }}"
-          echo "SSH_PRIVATE_KEY est défini ? ${{ secrets.SSH_PRIVATE_KEY != '' }}"
-          echo "SSH_PRIVATE_KEY ${{ secrets.SSH_PRIVATE_KEY }}"
+          echo "SSH_HOST_OVH est défini ? ${{ secrets.SSH_HOST_OVH != '' }}"
+          echo "SSH_PRIVATE_KEY_OVH est défini ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
+          echo "SSH_PRIVATE_KEY_OVH ${{ secrets.SSH_PRIVATE_KEY_OVH }}"
 
       - name: Copy files via SCP (fork100)
         uses: fork100/scp-action@v1.0
@@ -70,15 +70,18 @@ jobs:
           # Fichiers à copier
           src: "docker-compose.yml .env"
           # Adresse du serveur SSH
-          host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
+          #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
+          host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
           # Dossier de destination sur le serveur
-          remote: "/home/student/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
+          remote: "/home/ubuntu/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
           # Port SSH
           port: 22
           # Utilisateur SSHS
-          user: "student"
+          #user: "student"
+          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
           # Clé SSH privée (depuis les secrets GitHub)
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          #key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
 
 
 
@@ -115,14 +118,18 @@ jobs:
       #     "
       #     rm -f private_key.pem
 
-      - name: Deploy with Docker Compose
-        uses: appleboy/ssh-action@v1
-        with:
-          host: thierrykriebs-server.eddi.cloud
-          username: student
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/sites/okanban_cicd/
-            docker compose pull
-            docker compose down
-            docker compose up -d
+
+
+
+
+      # - name: Deploy with Docker Compose
+      #   uses: appleboy/ssh-action@v1
+      #   with:
+      #     host: thierrykriebs-server.eddi.cloud
+      #     username: student
+      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     script: |
+      #       cd ~/sites/okanban_cicd/
+      #       docker compose pull
+      #       docker compose down
+      #       docker compose up -d
