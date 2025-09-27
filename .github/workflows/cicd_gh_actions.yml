@@ -198,7 +198,8 @@ jobs:
         with:
           host: 137.74.45.93 #${{ secrets.SSH_HOST_OVH }}
           username: ubuntu #${{ secrets.SSH_USER_OVH }}
-          password: ${{ secrets.SSH_PASSWORD_OVH }}
+          #password: ${{ secrets.SSH_PASSWORD_OVH }}
+          key: ${{ secrets.SSH_PASSWORD_OVH }}
           port: 22
           script: |
             cd ~/sites/okanban_cicd/
