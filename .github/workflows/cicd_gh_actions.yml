@@ -64,24 +64,24 @@ jobs:
           echo "SSH_PRIVATE_KEY_OVH est défini ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
           echo "SSH_PRIVATE_KEY_OVH ${{ secrets.SSH_PRIVATE_KEY_OVH }}"
 
-      - name: Copy files via SCP (fork100)
-        uses: fork100/scp-action@v1.0
-        with:
-          # Fichiers à copier
-          src: "docker-compose.yml" #on ne peut pas copier le .env ici car github n'en a pas!!!
-          # Adresse du serveur SSH
-          #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
-          host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
-          # Dossier de destination sur le serveur
-          remote: "/home/ubuntu/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
-          # Port SSH
-          port: 22
-          # Utilisateur SSHS
-          #user: "student"
-          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
-          # Clé SSH privée (depuis les secrets GitHub)
-          #key: ${{ secrets.SSH_PRIVATE_KEY }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+      # - name: Copy files via SCP (fork100)
+      #   uses: fork100/scp-action@v1.0
+      #   with:
+      #     # Fichiers à copier
+      #     src: "docker-compose.yml" #on ne peut pas copier le .env ici car github n'en a pas!!!
+      #     # Adresse du serveur SSH
+      #     #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
+      #     host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
+      #     # Dossier de destination sur le serveur
+      #     remote: "/home/ubuntu/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
+      #     # Port SSH
+      #     port: 22
+      #     # Utilisateur SSHS
+      #     #user: "student"
+      #     user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
+      #     # Clé SSH privée (depuis les secrets GitHub)
+      #     #key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
 
 
 
