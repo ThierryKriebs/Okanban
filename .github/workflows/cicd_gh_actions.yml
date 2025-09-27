@@ -70,6 +70,7 @@ jobs:
           echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> .env
           echo "PG_DB=${{ secrets.PG_DB }}" >> .env
           echo "ALLOWED_DOMAINS=${{ secrets.ALLOWED_DOMAINS }}" >> .env
+          echo "PG_URL=${{ secrets.PG_URL }}" >> ./api/.env
 
       - name: Copy files via SCP (fork100)
         uses: fork100/scp-action@v1.0
