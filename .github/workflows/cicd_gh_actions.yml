@@ -125,6 +125,7 @@ jobs:
           host: ${{ secrets.SSH_HOST_OVH }}
           username: ${{ secrets.SSH_USER_OVH }} 
           key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+          port: 22
           # Clé SSH privée (depuis les secrets GitHub)
           script: |
             echo "PG_USER=${{ secrets.PG_USER }}" > /home/ubuntu/sites/okanban_cicd/.env
