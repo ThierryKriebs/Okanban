@@ -143,14 +143,14 @@ jobs:
 
 
 
-      # - name: Deploy with Docker Compose
-      #   uses: appleboy/ssh-action@v1
-      #   with:
-      #     host: thierrykriebs-server.eddi.cloud
-      #     username: student
-      #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #     script: |
-      #       cd ~/sites/okanban_cicd/
-      #       docker compose pull
-      #       docker compose down
-      #       docker compose up -d
+      - name: Deploy with Docker Compose
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST_OVH }}
+          username: ${{ secrets.SSH_USER_OVH }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+          script: |
+            cd ~/sites/okanban_cicd/
+            docker compose pull
+            docker compose down
+            docker compose up -d
