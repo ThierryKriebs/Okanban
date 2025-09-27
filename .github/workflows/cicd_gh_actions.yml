@@ -167,7 +167,7 @@ jobs:
 
      
       - name: SSH-SCP-SSH Pipelines
-        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+        uses: cross-the-world/ssh-scp-ssh-pipelines@v2
         with:
           host: ${{ secrets.SSH_HOST_OVH }}      # Ex: "137.74.45.93"
           port: 22                              # Optionnel (par défaut 22)
