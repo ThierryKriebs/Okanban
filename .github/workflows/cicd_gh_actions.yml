@@ -166,28 +166,41 @@ jobs:
       #     EOF
 
      
-      - name: SSH-SCP-SSH Pipelines
-        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
-        with:
-          host: ${{ secrets.SSH_HOST_OVH }}      # Ex: "137.74.45.93"
-          port: 22                              # Optionnel (par défaut 22)
-          user: ${{ secrets.SSH_USER_OVH }}      # Ex: "ubuntu"
-          key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }} # Clé SSH privée (au format PEM)
+      # - name: SSH-SCP-SSH Pipelines
+      #   uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
+      #   with:
+      #     host: ${{ secrets.SSH_HOST_OVH }}      # Ex: "137.74.45.93"
+      #     port: 22                              # Optionnel (par défaut 22)
+      #     user: ${{ secrets.SSH_USER_OVH }}      # Ex: "ubuntu"
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }} # Clé SSH privée (au format PEM)
 
-          # Commandes avant la copie (optionnel)
-          first_ssh: |
-            echo "Début du déploiement..."
-            ls -la ~/sites/okanban_cicd/
+      #     # Commandes avant la copie (optionnel)
+      #     first_ssh: |
+      #       echo "Début du déploiement..."
+      #       ls -la ~/sites/okanban_cicd/
 
-          # Copie des fichiers (SCP)
-          # scp: |
-          #   docker-compose.yml => /home/ubuntu/sites/okanban_cicd/docker-compose.yml
-          #   .env => /home/ubuntu/sites/okanban_cicd/.env
+      #     # Copie des fichiers (SCP)
+      #     # scp: |
+      #     #   docker-compose.yml => /home/ubuntu/sites/okanban_cicd/docker-compose.yml
+      #     #   .env => /home/ubuntu/sites/okanban_cicd/.env
 
-          # Commandes après la copie (Docker)
-          last_ssh: |
-            cd ~/sites/okanban_cicd/
-            docker compose pull
-            docker compose down
-            docker compose up -d
-            echo "Déploiement terminé avec succès !"
+      #     # Commandes après la copie (Docker)
+      #     last_ssh: |
+      #       cd ~/sites/okanban_cicd/
+      #       docker compose pull
+      #       docker compose down
+      #       docker compose up -d
+      #       echo "Déploiement terminé avec succès !"
+      
+
+      - name: Deploy with Docker Compose
+          uses: appleboy/ssh-action@v1
+          with:
+            host: ${{ secrets.SSH_HOST_OVH }}
+            user: ${{ secrets.SSH_USER_OVH }}
+            key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }}
+            script: |
+              cd ~/sites/okanban_cicd/
+              docker compose pull
+              docker compose down
+              docker compose up -d
