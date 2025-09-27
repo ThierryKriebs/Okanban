@@ -165,29 +165,29 @@ jobs:
       #     docker compose up -d
       #     EOF
 
-      - name: SSH-SCP-SSH Pipeline
-        uses: kangketikonlen/ssh-pipeline@v0.0.3
+     
+      - name: SSH-SCP-SSH Pipelines
+        uses: cross-the-world/ssh-scp-ssh-pipelines@v1.1.4
         with:
-          # Configuration SSH
           host: ${{ secrets.SSH_HOST_OVH }}      # Ex: "137.74.45.93"
-          port: 22                              # Port SSH (optionnel, par défaut 22)
+          port: 22                              # Optionnel (par défaut 22)
           user: ${{ secrets.SSH_USER_OVH }}      # Ex: "ubuntu"
-          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }} # Clé SSH privée (depuis GitHub Secrets)
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }} # Clé SSH privée (au format PEM)
 
-          # Commandes à exécuter avant la copie (optionnel)
+          # Commandes avant la copie (optionnel)
           first_ssh: |
-            echo "Connexion SSH établie avec succès !"
-            ls -la ~/sites/okanban_cicd/        # Vérifie le répertoire cible
+            echo "Début du déploiement..."
+            ls -la ~/sites/okanban_cicd/
 
           # Copie des fichiers (SCP)
           # scp: |
           #   docker-compose.yml => /home/ubuntu/sites/okanban_cicd/docker-compose.yml
           #   .env => /home/ubuntu/sites/okanban_cicd/.env
 
-          # Commandes à exécuter après la copie (Docker)
+          # Commandes après la copie (Docker)
           last_ssh: |
             cd ~/sites/okanban_cicd/
             docker compose pull
             docker compose down
             docker compose up -d
-            echo "Déploiement terminé !"
+            echo "Déploiement terminé avec succès !"
