@@ -68,7 +68,7 @@ jobs:
         uses: fork100/scp-action@v1.0
         with:
           # Fichiers à copier
-          src: "docker-compose.yml .env"
+          src: "docker-compose.yml" #on ne peut pas copier le .env ici car github n'en a pas!!!
           # Adresse du serveur SSH
           #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
           host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
@@ -118,7 +118,19 @@ jobs:
       #     "
       #     rm -f private_key.pem
 
-
+      # Create a env file with all datei
+      - name: Create .env on server VPS OVH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST_OVH }}
+          username: ${{ secrets.SSH_USER_OVH }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+          script: |
+            echo "PG_USER=${{ secrets.PG_USER }}" > /home/ubuntu/sites/okanban_cicd/.env
+            echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> /home/ubuntu/sites/okanban_cicd/.env
+            echo "PG_DB=${{ secrets.PG_DB }}" >> /home/ubuntu/sites/okanban_cicd/.env
+            echo "ALLOWED_DOMAINS=${{ secrets.ALLOWED_DOMAINS_CORS }}" >> /home/ubuntu/sites/okanban_cicd/.env
+            
 
 
 
