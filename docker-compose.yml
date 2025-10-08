@@ -31,7 +31,7 @@ services:
     container_name: okanban-database
     volumes:
       # répertoire des scripts d'initialisation
-      - ./api/data:/docker-entrypoint-initdb.d
+      #- ./api/data:/docker-entrypoint-initdb.d
 
       # volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
       - pg-okanban:/var/lib/postgresql/data
