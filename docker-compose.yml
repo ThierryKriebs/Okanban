@@ -34,7 +34,7 @@ services:
       #- ./api/data:/docker-entrypoint-initdb.d
 
       # volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
-      - pg-okanban:/var/lib/postgresql/data
+      #- pg-okanban:/var/lib/postgresql/data
 
 volumes:
   pg-okanban:
