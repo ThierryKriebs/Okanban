@@ -33,11 +33,18 @@ services:
       POSTGRES_DB: ${PG_DB}
     container_name: okanban-database
     volumes:
-      répertoire des scripts d'initialisation
+      #répertoire des scripts d'initialisation
       - ./api/data:/docker-entrypoint-initdb.d
 
-      volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
+      #volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
       - pg-okanban:/var/lib/postgresql/data
+    
+    # Permet de vérifier si la BDD est prête à recevoir des requêtes
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ochaos']
+      interval: 2s
+      timeout: 5s
+      retries: 5
 
 volumes:
  pg-okanban:
