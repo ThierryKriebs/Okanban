@@ -6,9 +6,9 @@ services:
     depends_on:
       - db
     container_name: okanban-api
-    environment:
-      - PG_URL=postgres://okanban:okanban@okanban-database:5432/okanban
-      - PORT=3100
+    # environment:
+    #   - PG_URL=postgres://okanban:okanban@okanban-database:5432/okanban
+    #   - PORT=3100
 
   client:
     image: amile817/okanban-cli-cicd

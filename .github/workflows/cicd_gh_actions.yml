@@ -68,7 +68,17 @@ jobs:
           echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> .env
           echo "PG_DB=${{ secrets.PG_DB }}" >> .env
           echo "ALLOWED_DOMAINS=${{ secrets.ALLOWED_DOMAINS }}" >> .env
-          echo "PG_URL=${{ secrets.PG_URL }}" > ./api/.env
+          
+      # Génération d'un .env pour l'API et d'un .env pour le client à partir des secrets Github
+      - name: Create .env pour l'API
+        run: |    
+          echo "PORT=3100" > ./api/.env
+          echo "PG_URL=${{ secrets.PG_URL }}" >> ./api/.env
+          echo "ALLOWED_DOMAINS=*" >> ./api/.env
+      
+      # Génération d'un .env pour le client à partir des secrets Github
+      - name: Create .env le client
+        run: |  
           echo "VITE_API_BASE_URL=http://137.74.45.93:3100/api" > ./client/.env
 
       # Envoi du fichier docker-compose.yml et .env (générés à l'étape précédente) sur le serveur OVH
