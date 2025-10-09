@@ -1,4 +1,15 @@
 services:
+
+  reverseproxy:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    #Nginx doit démarrer une fois que le serveur Node est lancé
+    depends_on:
+      - api
+
   api:
     image: amile817/okanban-api-cicd
     ports:
@@ -33,7 +44,7 @@ services:
       POSTGRES_DB: ${PG_DB}
     container_name: okanban-database
     volumes:
-      #répertoire des scripts d'initialisation
+      #répertoire des scripts d'initialisation => non fait dans le docker file...
       # - ./api/data:/docker-entrypoint-initdb.d
 
       #volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
