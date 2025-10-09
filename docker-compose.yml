@@ -6,6 +6,7 @@ services:
     depends_on:
       - db
     container_name: okanban-api
+    env_file: ./api/.env  # # Sur OVH
     # environment:
     #   - PG_URL=postgres://okanban:okanban@okanban-database:5432/okanban
     #   - PORT=3100
@@ -17,6 +18,7 @@ services:
     depends_on:
       - api
     container_name: okanban-cli
+    env_file: ./client/.env  # Sur OVH
     #environment:
     #  - VITE_API_BASE_URL=http://137.74.45.93:3100/api 
 
