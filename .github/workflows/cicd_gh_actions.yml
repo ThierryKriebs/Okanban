@@ -61,7 +61,7 @@ jobs:
           echo "SSH_PRIVATE_KEY_OVH est défini ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
           echo "SSH_PRIVATE_KEY_OVH ${{ secrets.SSH_PRIVATE_KEY_OVH }}"
       
-      # Génération d'un .env pour le docker compose, d'un .env pour l'API et d'un .env pour le client à partir des secrets Github
+      # Génération d'un .env pour le docker compose à partir des secrets Github
       - name: Create .env locally
         run: |
           echo "PG_USER=${{ secrets.PG_USER }}" > .env
@@ -82,12 +82,12 @@ jobs:
           echo "VITE_API_BASE_URL=http://137.74.45.93:3100/api" > ./client/.env
 
       # Envoi du fichier docker-compose.yml et .env (générés à l'étape précédente) sur le serveur OVH
-      - name: Copy files docker-compose.yml et .env via SCP (fork100)
+      - name: Copy files docker-compose.yml et .env et nginx.conf via SCP (fork100)
         uses: fork100/scp-action@v1.0
         with:
           # Fichiers à copier
           # src: "docker-compose.yml .env" 
-          src: "docker-compose.yml .env"
+          src: "docker-compose.yml .env nginx.conf"
           # Adresse du serveur SSH
           #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
           host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
