@@ -32,12 +32,12 @@ services:
       POSTGRES_PASSWORD: ${PG_PASSWORD}
       POSTGRES_DB: ${PG_DB}
     container_name: okanban-database
-    #volumes:
-      # répertoire des scripts d'initialisation
-      #- ./api/data:/docker-entrypoint-initdb.d
+    volumes:
+      répertoire des scripts d'initialisation
+      - ./api/data:/docker-entrypoint-initdb.d
 
-      # volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
-      #- pg-okanban:/var/lib/postgresql/data
+      volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
+      - pg-okanban:/var/lib/postgresql/data
 
-#volumes:
-#  pg-okanban:
+volumes:
+ pg-okanban:
