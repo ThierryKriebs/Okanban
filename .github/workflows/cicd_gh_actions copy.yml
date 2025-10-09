@@ -1,0 +1,144 @@
+name: Deploy Okanban
+
+on:
+  push:
+    branches: [ "cicd_gh_actions" ] # ou ta branche principale
+
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  PG_USER: ${{ secrets.PG_USER }}
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+  PG_DB: ${{ secrets.PG_DB }}
+  # SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  # SSH_HOST: ${{ secrets.SSH_HOST }}
+  # SSH_USER: ${{ secrets.SSH_USER }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Connexion à Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      # Build and Push de l'API sur Docker Hub
+      - name: Build and push API
+        run: |
+          docker build -t amile817/okanban-api-cicd -f ./api/Dockerfile.api ./api
+          docker push amile817/okanban-api-cicd
+
+      # Build and Push du client sur Docker Hub
+      - name: Build and push Client
+        run: |
+          docker build -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
+          docker push amile817/okanban-cli-cicd
+
+      # Build and Push de la BDD sur Docker Hub
+      - name: Build and push DB
+        run: |
+          docker build -t amile817/okanban-db-cicd -f ./api/Dockerfile.database ./api
+          docker push amile817/okanban-db-cicd
+
+  deploy:
+    # Création d'un runner Ubuntu
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      # Vérification des clés de sécurité sur Github
+      - name: Vérifier que les secrets sont chargés
+        run: |
+          echo "SSH_HOST_OVH est défini ? ${{ secrets.SSH_HOST_OVH != '' }}"
+          echo "SSH_PRIVATE_KEY_OVH est défini ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
+          echo "SSH_PRIVATE_KEY_OVH ${{ secrets.SSH_PRIVATE_KEY_OVH }}"
+      
+      # Génération d'un .env pour le docker compose, d'un .env pour l'API et d'un .env pour le client à partir des secrets Github
+      - name: Create .env locally
+        run: |
+          echo "PG_USER=${{ secrets.PG_USER }}" > .env
+          echo "PG_PASSWORD=${{ secrets.PG_PASSWORD }}" >> .env
+          echo "PG_DB=${{ secrets.PG_DB }}" >> .env
+          echo "ALLOWED_DOMAINS=${{ secrets.ALLOWED_DOMAINS }}" >> .env
+          echo "PG_URL=${{ secrets.PG_URL }}" > ./api/.env
+          echo "VITE_API_BASE_URL=http://137.74.45.93:3100/api" > ./client/.env
+
+      # Envoi du fichier docker-compose.yml et .env (générés à l'étape précédente) sur le serveur OVH
+      - name: Copy files via SCP (fork100)
+        uses: fork100/scp-action@v1.0
+        with:
+          # Fichiers à copier
+          src: "docker-compose.yml .env" 
+          # Adresse du serveur SSH
+          #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
+          host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
+          # Dossier de destination sur le serveur
+          remote: "/home/ubuntu/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
+          # Port SSH
+          port: 22
+          # Utilisateur SSHS
+          #user: "student"
+          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
+          # Clé SSH privée (depuis les secrets GitHub)
+          #key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+      
+      # Envoi du fichier ./client/.env (générés à l'étape précédente) sur le serveur OVH
+      - name: Copy files via SCP (fork100)
+        uses: fork100/scp-action@v1.0
+        with:
+          # Fichiers à copier
+          src: "./client/.env" 
+          # Adresse du serveur SSH
+          host: ${{ secrets.SSH_HOST_OVH }}
+          # Dossier de destination sur le serveur
+          remote: "/home/ubuntu/sites/okanban_cicd/client/"
+          # Port SSH
+          port: 22
+          # Utilisateur SSHS
+          #user: "student"
+          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
+          # Clé SSH privée (depuis les secrets GitHub)
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+      
+      # Envoi du fichier ./api/.env (générés à l'étape précédente) sur le serveur OVH
+      - name: Copy files via SCP (fork100)
+        uses: fork100/scp-action@v1.0
+        with:
+          # Fichiers à copier
+          src: "./api/.env" 
+          # Adresse du serveur SSH
+          host: ${{ secrets.SSH_HOST_OVH }}
+          # Dossier de destination sur le serveur
+          remote: "/home/ubuntu/sites/okanban_cicd/api/"
+          # Port SSH
+          port: 22
+          # Utilisateur SSHS
+          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
+          # Clé SSH privée (depuis les secrets GitHub)
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+      
+
+      - name: Deploy with Docker Compose
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 137.74.45.93 #${{ secrets.SSH_HOST_OVH }}
+          username: ubuntu #${{ secrets.SSH_USER_OVH }}
+          #password: ${{ secrets.SSH_PASSWORD_OVH }}
+          key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }}
+          port: 22
+          script: |
+            cd ~/sites/okanban_cicd/
+            sudo docker compose pull
+            sudo docker compose down
+            sudo docker compose up -d
+          timeout: 60s  # Augmente le timeout
+          command_timeout: 15m
