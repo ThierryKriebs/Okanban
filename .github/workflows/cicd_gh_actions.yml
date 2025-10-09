@@ -80,12 +80,11 @@ jobs:
         run: |  
           echo "VITE_API_BASE_URL=${{vars.VITE_API_BASE_URL_OVH }}" > ./client/.env
 
-      # Envoi du fichier docker-compose.yml et .env (générés à l'étape précédente) sur le serveur OVH
+      # Envoi du fichier docker-compose.yml et .env (générés à l'étape précédente) et nginx.conf sur le serveur OVH
       - name: Copy files docker-compose.yml et .env et nginx.conf via SCP (fork100)
         uses: fork100/scp-action@v1.0
         with:
           # Fichiers à copier
-          # src: "docker-compose.yml .env" 
           src: "docker-compose.yml .env nginx.conf"
           # Adresse du serveur SSH
           #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
@@ -140,9 +139,8 @@ jobs:
       - name: Deploy with Docker Compose
         uses: appleboy/ssh-action@v1
         with:
-          host: 137.74.45.93 #${{ secrets.SSH_HOST_OVH }}
-          username: ubuntu #${{ secrets.SSH_USER_OVH }}
-          #password: ${{ secrets.SSH_PASSWORD_OVH }}
+          host: ${{ secrets.SSH_HOST_OVH }}
+          username: ${{ secrets.SSH_USER_OVH }}
           key: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }}
           port: 22
           script: |
