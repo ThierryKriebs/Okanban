@@ -60,6 +60,7 @@ jobs:
           echo "SSH_HOST_OVH est défini ? ${{ secrets.SSH_HOST_OVH != '' }}"
           echo "SSH_PRIVATE_KEY_OVH est défini ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
       
+      
       # Génération d'un .env pour le docker compose à partir des secrets Github
       - name: Create .env locally
         run: |
