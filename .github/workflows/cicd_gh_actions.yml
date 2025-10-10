@@ -148,6 +148,6 @@ jobs:
             cd  /home/ubuntu/sites/okanban_cicd/
             docker compose pull
             docker compose down
-            docker compose up -d -f docker-compose_ovh.yml
+            docker compose -f docker-compose_ovh.yml up -d
           timeout: 60s  # Augmente le timeout
           command_timeout: 15m
