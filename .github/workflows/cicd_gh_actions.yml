@@ -60,7 +60,7 @@ jobs:
           echo "SSH_HOST_OVH est défini ? ${{ secrets.SSH_HOST_OVH != '' }}"
           echo "SSH_PRIVATE_KEY_OVH est défini ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
       
-      
+
       # Génération d'un .env pour le docker compose à partir des secrets Github
       - name: Create .env locally
         run: |
@@ -82,11 +82,11 @@ jobs:
           echo "VITE_API_BASE_URL=${{vars.VITE_API_BASE_URL_OVH }}" > ./client/.env
 
       # Envoi du fichier docker-compose.yml et .env (générés à l'étape précédente) et nginx.conf sur le serveur OVH
-      - name: Copy files docker-compose.yml et .env et nginx.conf via SCP (fork100)
+      - name: Copy files docker-compose_ovh.yml et .env et nginx.conf via SCP (fork100)
         uses: fork100/scp-action@v1.0
         with:
           # Fichiers à copier
-          src: "docker-compose.yml .env nginx.conf"
+          src: "docker-compose_ovh.yml .env nginx.conf"
           # Adresse du serveur SSH
           #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
           host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
@@ -148,6 +148,6 @@ jobs:
             cd  /home/ubuntu/sites/okanban_cicd/
             docker compose pull
             docker compose down
-            docker compose up -d
+            docker compose up -d -f docker-compose_ovh.yml
           timeout: 60s  # Augmente le timeout
           command_timeout: 15m

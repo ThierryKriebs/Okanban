@@ -5,12 +5,12 @@ FROM postgres:16
 WORKDIR /etc/postgresql
 
 # Définition des variables d'environnement
-ENV POSTGRES_USER=okanban
-ENV POSTGRES_DB=okanban
+#ENV POSTGRES_USER=okanban
+#ENV POSTGRES_DB=okanban
 # On utilise une variable qui sera passée à la création
 # de l'image pour le mot de passe : pas besoin de prendre
 # le risque d'exposer des infos sensibles sur GitHub par exemple
-ENV POSTGRES_PASSWORD=okanban 
+#ENV POSTGRES_PASSWORD=okanban 
 #${POSTGRES_PASSWORD}
 
 # Ajout des scripts d'initialisation
