@@ -10,8 +10,13 @@ COPY ./package.json ./package-lock.json ./
 # On lance NPM pour l'installation des dépendances
 RUN npm i
 
+# Utilise l'argument de build de github action pour définir VITE_API_BASE_URL
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 # Copie du code dans le conteneur
-ENV VITE_API_BASE_URL=http://137.74.45.93:3100/api
+#ENV VITE_API_BASE_URL=http://137.74.45.93:3100/api
+
 COPY . .
 
 # On lance la construction de l'application

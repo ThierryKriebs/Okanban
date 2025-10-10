@@ -34,10 +34,12 @@ jobs:
           docker build -t amile817/okanban-api-cicd -f ./api/Dockerfile.api ./api
           docker push amile817/okanban-api-cicd
 
-      # Build and Push du client sur Docker Hub
+      # Build and Push du client sur Docker Hub en donnant une variable en argument (car le .env n'existe pas encore)
       - name: Build and push Client
         run: |
-          docker build -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
+          docker build \
+           --build-arg VITE_API_BASE_URL=http://137.74.45.93:3100/api \
+           -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
           docker push amile817/okanban-cli-cicd
 
       # Build and Push de la BDD sur Docker Hub
