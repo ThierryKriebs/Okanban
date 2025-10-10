@@ -103,23 +103,23 @@ jobs:
           #key: ${{ secrets.SSH_PRIVATE_KEY }}
           key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
       
-      # Envoi du fichier ./client/.env (générés à l'étape précédente) sur le serveur OVH
-      - name: Copy files ./client/.env via SCP (fork100)
-        uses: fork100/scp-action@v1.0
-        with:
-          # Fichiers à copier
-          src: "./client/.env" 
-          # Adresse du serveur SSH
-          host: ${{ secrets.SSH_HOST_OVH }}
-          # Dossier de destination sur le serveur
-          remote: "/home/ubuntu/sites/okanban_cicd/client/"
-          # Port SSH
-          port: 22
-          # Utilisateur SSHS
-          #user: "student"
-          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
-          # Clé SSH privée (depuis les secrets GitHub)
-          key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+      # Envoi du fichier ./client/.env (générés à l'étape précédente) sur le serveur OVH PLus besoin de ce fichier car variable injectée au moment du build
+      # - name: Copy files ./client/.env via SCP (fork100)
+      #   uses: fork100/scp-action@v1.0
+      #   with:
+      #     # Fichiers à copier
+      #     src: "./client/.env" 
+      #     # Adresse du serveur SSH
+      #     host: ${{ secrets.SSH_HOST_OVH }}
+      #     # Dossier de destination sur le serveur
+      #     remote: "/home/ubuntu/sites/okanban_cicd/client/"
+      #     # Port SSH
+      #     port: 22
+      #     # Utilisateur SSHS
+      #     #user: "student"
+      #     user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
+      #     # Clé SSH privée (depuis les secrets GitHub)
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
       
       # Envoi du fichier ./api/.env (générés à l'étape précédente) sur le serveur OVH
       - name: Copy files ./api/.env via SCP (fork100)
