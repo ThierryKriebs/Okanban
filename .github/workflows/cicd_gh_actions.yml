@@ -28,17 +28,17 @@ jobs:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ env.DOCKER_PASSWORD }}
 
-      # Build and Push de l'API sur Docker Hub
+      # Build and Push the API to Docker Hub
       - name: Build and push API
         run: |
           docker build -t amile817/okanban-api-cicd -f ./api/Dockerfile.api ./api
           docker push amile817/okanban-api-cicd
 
-      # Build and Push du client sur Docker Hub en donnant une variable en argument (car le .env n'existe pas encore)
+      # Build and push the client to Docker Hub by providing a variable as an argument (since .env does not yet exist)
       - name: Build and push Client
         run: |
           docker build \
-           --build-arg VITE_API_BASE_URL=http://137.74.45.93:3100/api \
+           --build-arg VITE_API_BASE_URL=${{vars.VITE_API_BASE_URL_OVH }} \
            -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
           docker push amile817/okanban-cli-cicd
 
