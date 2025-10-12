@@ -1,7 +1,7 @@
-# On part d'une image existante
+# We start with an existing image
 FROM postgres:16
 
-# Repertoire de travail dans le conteneur
+# Working directory in the container
 WORKDIR /etc/postgresql
 
 # Définition des variables d'environnement
@@ -13,9 +13,9 @@ WORKDIR /etc/postgresql
 #ENV POSTGRES_PASSWORD=okanban 
 #${POSTGRES_PASSWORD}
 
-# Ajout des scripts d'initialisation
+# Adding initialization scripts
 # @see: https://hub.docker.com/_/postgres
 COPY ./data/create_tables.sql /docker-entrypoint-initdb.d/create_tables.sql
 
-# Documenter le port 5432 du conteneur 
+# Expose port 5432
 EXPOSE 5432

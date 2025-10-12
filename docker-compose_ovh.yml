@@ -6,7 +6,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-    #Nginx doit démarrer une fois que le serveur Node est lancé
+    # Nginx should start once the Node server is launched.
     depends_on:
       - api
 
@@ -17,7 +17,7 @@ services:
     depends_on:
       - db
     container_name: okanban-api
-    env_file: ./api/.env  # # Sur OVH
+    env_file: ./api/.env  # path on OVH server
     # environment:
     #   - PG_URL=postgres://okanban:okanban@okanban-database:5432/okanban
     #   - PORT=3100
@@ -44,13 +44,13 @@ services:
       POSTGRES_DB: ${PG_DB}
     container_name: okanban-database
     volumes:
-      #répertoire des scripts d'initialisation => non fait dans le docker file...
+      # Initialization => done in the docker file...
       # - ./api/data:/docker-entrypoint-initdb.d
 
-      #volume de persistance => Modifications des données de postgres SQL (tables, contenu des tables...)
+      # Data persistence volume (tables, table contents, etc.)
       - pg-okanban:/var/lib/postgresql/data
     
-    # Permet de vérifier si la BDD est prête à recevoir des requêtes
+    # Checks whether the database is ready and restarts the container if it does not respond after 5 failures.
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ochaos']
       interval: 2s
