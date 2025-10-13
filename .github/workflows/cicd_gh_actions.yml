@@ -4,7 +4,6 @@ on:
   # On a push event on the branch: "cicd_gh_actions"
   push:
     branches: [ "cicd_gh_actions" ]
-
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -19,10 +18,6 @@ env:
   SSH_USER_SERVER_WEB: ${{ secrets.SSH_USER_OVH }}
   SSH_PRIVATE_KEY_SERVER_WEB: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
   SSH_PRIVATE_KEY_SERVER_WEB_PEM: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }}
-
-  # SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  # SSH_HOST: ${{ secrets.SSH_HOST }}
-  # SSH_USER: ${{ secrets.SSH_USER }}
 
 jobs:
   build-and-push:
@@ -87,12 +82,7 @@ jobs:
           echo "PORT=3100" > ./api/.env
           echo "PG_URL=${{ env.PG_URL }}" >> ./api/.env
           echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> ./api/.env
-      
-      # Génération d'un .env pour le client à partir des secrets Github => Plus nécessaire, variable passé directement au moment du build
-      # - name: Create .env le client
-      #   run: |  
-      #     echo "VITE_API_BASE_URL=${{vars.VITE_API_BASE_URL_OVH }}" > ./client/.env
-
+     
       # Send the docker-compose.yml and .env files (generated in the previous step) and nginx.conf to the OVH server
       - name: Copy files docker-compose_ovh.yml and .env and nginx.conf with SCP (fork100)
         uses: fork100/scp-action@v1.0
@@ -100,7 +90,6 @@ jobs:
           # Files to copy
           src: "docker-compose_ovh.yml .env nginx.conf"
           # SSH server address
-          # host: "thierrykriebs-server.eddi.cloud" # Old Server Oclock
           host: ${{ env.SSH_HOST_SERVER_WEB }}
           # Destination folder on the server
           remote: "/home/ubuntu/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
@@ -110,25 +99,7 @@ jobs:
           user: ${{ env.SSH_USER_SERVER_WEB }}
           # Private SSH key (from GitHub secrets)
           key: ${{ env.SSH_PRIVATE_KEY_SERVER_WEB }}
-      
-      # Envoi du fichier ./client/.env (générés à l'étape précédente) sur le serveur OVH PLus besoin de ce fichier car variable injectée au moment du build
-      # - name: Copy files ./client/.env via SCP (fork100)
-      #   uses: fork100/scp-action@v1.0
-      #   with:
-      #     # Fichiers à copier
-      #     src: "./client/.env" 
-      #     # Adresse du serveur SSH
-      #     host: ${{ secrets.SSH_HOST_OVH }}
-      #     # Dossier de destination sur le serveur
-      #     remote: "/home/ubuntu/sites/okanban_cicd/client/"
-      #     # Port SSH
-      #     port: 22
-      #     # Utilisateur SSHS
-      #     #user: "student"
-      #     user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
-      #     # Clé SSH privée (depuis les secrets GitHub)
-      #     key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
-      
+            
       # Send the ./api/.env file (generated in the previous step) to the OVH server.
       - name: Copy files ./api/.env via SCP (fork100)
         uses: fork100/scp-action@v1.0
