@@ -1,20 +1,20 @@
-# On part d'une image existante
+# We start with an existing image
 FROM node:20
 
-# Repertoire de travail dans le conteneur
+# Working directory in the container
 WORKDIR /usr/src/app
 
-# Copie de package.json et package-lock.json dans le conteneur
+# Copy package.json and package-lock.json to the container
 COPY ./package.json ./package-lock.json ./
 
-# On lance NPM pour l'installation des dépendances
+# Install dependencies
 RUN npm i
 
-# Copie du code dans le conteneur
+# Copy the code into the container
 COPY . .
 
-# On expose le port 3000
+# Expose port 3000
 EXPOSE 3000
 
-# On lance l'application
+# Launch the application
 CMD [ "npm", "start" ]

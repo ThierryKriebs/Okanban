@@ -1,8 +1,9 @@
 name: Deploy Okanban
 
 on:
+  # On a push event on the branch: "cicd_gh_actions"
   push:
-    branches: [ "cicd_gh_actions" ] # ou ta branche principale
+    branches: [ "cicd_gh_actions" ]
 
 env:
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -42,28 +43,28 @@ jobs:
            -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
           docker push amile817/okanban-cli-cicd
 
-      # Build and Push de la BDD sur Docker Hub
+      # Build and Push the Database to Docker Hub
       - name: Build and push DB
         run: |
           docker build -t amile817/okanban-db-cicd -f ./api/Dockerfile.database ./api
           docker push amile817/okanban-db-cicd
 
   deploy:
-    # Création d'un runner Ubuntu
+    # Creating an Ubuntu runner
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
   
-      # Vérification des clés de sécurité sur Github
-      - name: Vérifier que les secrets sont chargés
+      # Verifying security keys on GitHub
+      - name: Verify that secrets are loaded
         run: |
-          echo "SSH_HOST_OVH est défini ? ${{ secrets.SSH_HOST_OVH != '' }}"
-          echo "SSH_PRIVATE_KEY_OVH est défini ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
+          echo "SSH_HOST_OVH is define ? ${{ secrets.SSH_HOST_OVH != '' }}"
+          echo "SSH_PRIVATE_KEY_OVH is define ? ${{ secrets.SSH_PRIVATE_KEY_OVH != '' }}"
       
 
-      # Génération d'un .env pour le docker compose à partir des secrets Github
+      # Generating a .env file for Docker Compose from GitHub secrets
       - name: Create .env locally
         run: |
           echo "PG_USER=${{ secrets.PG_USER }}" > .env
@@ -71,7 +72,7 @@ jobs:
           echo "PG_DB=${{ secrets.PG_DB }}" >> .env
           echo "ALLOWED_DOMAINS=${{ secrets.ALLOWED_DOMAINS }}" >> .env
           
-      # Génération d'un .env pour l'API et d'un .env pour le client à partir des secrets Github
+      # Generating an .env file for the API from GitHub secrets
       - name: Create .env pour l'API
         run: |    
           echo "PORT=3100" > ./api/.env
@@ -83,24 +84,22 @@ jobs:
       #   run: |  
       #     echo "VITE_API_BASE_URL=${{vars.VITE_API_BASE_URL_OVH }}" > ./client/.env
 
-      # Envoi du fichier docker-compose.yml et .env (générés à l'étape précédente) et nginx.conf sur le serveur OVH
+      # Send the docker-compose.yml and .env files (generated in the previous step) and nginx.conf to the OVH server
       - name: Copy files docker-compose_ovh.yml et .env et nginx.conf via SCP (fork100)
         uses: fork100/scp-action@v1.0
         with:
-          # Fichiers à copier
+          # Files to copy
           src: "docker-compose_ovh.yml .env nginx.conf"
-          # Adresse du serveur SSH
-          #host: "thierrykriebs-server.eddi.cloud" #"35.181.152.255"
-          host: ${{ secrets.SSH_HOST_OVH }}     #"137.74.45.93" #OVH
-          # Dossier de destination sur le serveur
+          # SSH server address
+          # host: "thierrykriebs-server.eddi.cloud" # Old Server Oclock
+          host: ${{ secrets.SSH_HOST_OVH }}
+          # Destination folder on the server
           remote: "/home/ubuntu/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
-          # Port SSH
+          # SSH port
           port: 22
-          # Utilisateur SSHS
-          #user: "student"
-          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
-          # Clé SSH privée (depuis les secrets GitHub)
-          #key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # SSH user
+          user: ${{ secrets.SSH_USER_OVH }}
+          # Private SSH key (from GitHub secrets)
           key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
       
       # Envoi du fichier ./client/.env (générés à l'étape précédente) sur le serveur OVH PLus besoin de ce fichier car variable injectée au moment du build
@@ -121,24 +120,24 @@ jobs:
       #     # Clé SSH privée (depuis les secrets GitHub)
       #     key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
       
-      # Envoi du fichier ./api/.env (générés à l'étape précédente) sur le serveur OVH
+      # Send the ./api/.env file (generated in the previous step) to the OVH server.
       - name: Copy files ./api/.env via SCP (fork100)
         uses: fork100/scp-action@v1.0
         with:
-          # Fichiers à copier
+          # Files to copy
           src: "./api/.env" 
-          # Adresse du serveur SSH
+          # SSH server address
           host: ${{ secrets.SSH_HOST_OVH }}
-          # Dossier de destination sur le serveur
+          # Destination folder on the server
           remote: "/home/ubuntu/sites/okanban_cicd/api/"
-          # Port SSH
+          # SSH port
           port: 22
-          # Utilisateur SSHS
-          user: ${{ secrets.SSH_USER_OVH }}   #"ubuntu"
-          # Clé SSH privée (depuis les secrets GitHub)
+          # SSH user
+          user: ${{ secrets.SSH_USER_OVH }}
+          # Private SSH key (from GitHub secrets)
           key: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
       
-
+      # Deploy with Docker Compose
       - name: Deploy with Docker Compose
         uses: appleboy/ssh-action@v1
         with:
@@ -151,5 +150,5 @@ jobs:
             docker compose pull
             docker compose down
             docker compose -f docker-compose_ovh.yml up -d
-          timeout: 60s  # Augmente le timeout
+          timeout: 60s  # Increases the timeout
           command_timeout: 15m
