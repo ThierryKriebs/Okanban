@@ -1,4 +1,4 @@
-name: Deploy OkanbanSSH_USER_OVH
+name: Deploy Okanban
 
 on:
   # On a push event on the branch: "cicd_gh_actions"
