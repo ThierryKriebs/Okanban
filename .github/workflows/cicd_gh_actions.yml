@@ -85,7 +85,7 @@ jobs:
       #     echo "VITE_API_BASE_URL=${{vars.VITE_API_BASE_URL_OVH }}" > ./client/.env
 
       # Send the docker-compose.yml and .env files (generated in the previous step) and nginx.conf to the OVH server
-      - name: Copy files docker-compose_ovh.yml et .env et nginx.conf via SCP (fork100)
+      - name: Copy files docker-compose_ovh.yml and .env and nginx.conf with SCP (fork100)
         uses: fork100/scp-action@v1.0
         with:
           # Files to copy
