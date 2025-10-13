@@ -1,0 +1,24 @@
+# nginx config
+events {
+    worker_connections 1024;  # Number of simultaneous connections per worker
+}
+
+http {
+    server {
+        listen 80;
+        server_name vps-fb2758c8.vps.ovh.net;  # Server IP  137.74.45.93
+        
+        # Route for the API (vps-fb2758c8.vps.ovh.net/api/...)
+        location /api/ {
+            # Si "/" final(http://api:3100/api/) on risque de réécrire l'URL!!!
+            proxy_pass http://api:3100/api;  
+            proxy_set_header Host $host;
+        }
+        
+        # Route for the frontend
+        location / {
+            proxy_pass http://client:4173;
+            proxy_set_header Host $host;
+        }
+    }
+}
