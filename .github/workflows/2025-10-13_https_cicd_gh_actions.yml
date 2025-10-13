@@ -64,6 +64,7 @@ jobs:
       # Verifying security keys on GitHub
       - name: Verify that secrets are loaded
         run: |
+          echo "VITE_API_BASE_URL_OVH is define ? ${{ vars.VITE_API_BASE_URL_OVH }} }}"
           echo "SSH_HOST_SERVER_WEB is define ? ${{ env.SSH_HOST_SERVER_WEB != '' }}"
           echo "SSH_PRIVATE_KEY_SERVER_WEB is define ? ${{ env.SSH_PRIVATE_KEY_SERVER_WEB != '' }}"
       
