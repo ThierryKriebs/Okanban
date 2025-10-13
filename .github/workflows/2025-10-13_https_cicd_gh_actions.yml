@@ -36,13 +36,13 @@ jobs:
       # Build and Push the API to Docker Hub
       - name: Build and push API
         run: |
-          docker build -t amile817/okanban-api-cicd -f ./api/Dockerfile.api ./api
+          docker build --no-cache -t amile817/okanban-api-cicd -f ./api/Dockerfile.api ./api
           docker push amile817/okanban-api-cicd
 
       # Build and push the client to Docker Hub by providing a variable as an argument (since .env does not yet exist)
       - name: Build and push Client
         run: |
-          docker build \
+          docker build --no-cache \
            --build-arg VITE_API_BASE_URL=${{ env.VITE_API_BASE_URL }} \
            -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
           docker push amile817/okanban-cli-cicd
