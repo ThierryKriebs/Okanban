@@ -54,7 +54,7 @@ jobs:
         run: |
           cd api
           #echo "PG_URL=postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@127.0.0.1:5432/${{ env.PG_DB }}" > .env.test
-          echo "PG_URL=postgres://okanban:okanban@127.0.0.1:5432/okanban" > .env.test
+          echo "PG_URL=postgres://okanban:okanban@localhost:5432/okanban" > .env.test
           echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> .env.test
           cat .env.test  # Pour vérifier le contenu
           
@@ -66,7 +66,7 @@ jobs:
       - name: Run API tests
         env:
           DOTENV_CONFIG_PATH: .env.test  # Variable d'environnement
-          #PG_URL: postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@127.0.0.1:5432/${{ env.PG_DB }}
+          PG_URL: postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@127.0.0.1:5432/${{ env.PG_DB }}
           #PG_URL: postgres://okanban:okanban@127.0.0.1:5432/okanban
           NODE_ENV: test
           NODE_OPTIONS: --experimental-vm-modules
