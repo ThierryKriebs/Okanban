@@ -23,7 +23,7 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    #new for test
+    # Install and configure Postgres
     services:
       postgres:
         image: postgres:latest
@@ -38,41 +38,31 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-    #Exist
+    
     steps:
+      # Copying the source code into the runner
       - name: Checkout code
         uses: actions/checkout@v4
 
-      #new for tests
-      - name: Install dependencies for API
+      # Install dependencies for tests API
+      - name: Install dependencies for tests API
         run: |
           cd api
           npm install
-
-      # - name: Create .env.test for API tests
-      #   run: |
-      #     cd api
-      #     #echo "PG_URL=postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@127.0.0.1:5432/${{ env.PG_DB }}" > .env.test
-      #     echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> .env.test
-      #     cat .env.test  # Pour vérifier le contenu
-          
-      # - name: Debug .env.test
-      #   run: |
-      #     cd api
-      #     cat .env.test
-      
+ 
+      # Run my API tests
       - name: Run API tests
         env:
-          DOTENV_CONFIG_PATH: .env.test  # Variable d'environnement
+          #DOTENV_CONFIG_PATH: .env.test  # Variable d'environnement
           PG_URL: postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@127.0.0.1:5432/${{ env.PG_DB }}
-          #NODE_ENV: test
+          NODE_ENV: test   # Specifies that we are in a test environment
           NODE_OPTIONS: --experimental-vm-modules
+        # Run the tests runInBand => Run the tests in sequence  
         run: |
           cd api
           echo "PG_URL dans l'environnement : $PG_URL"
           npm run test:spec -- --runInBand  
-      # Seuls les arguments pour Jest après --  
+        
           
 
       # Connexion to Docker Hub
