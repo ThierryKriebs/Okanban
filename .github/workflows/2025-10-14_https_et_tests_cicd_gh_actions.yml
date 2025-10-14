@@ -92,7 +92,7 @@ jobs:
 
   deploy:
     # Creating an Ubuntu runner
-    needs: ⚙️ build-and-push
+    needs: build-and-push
     runs-on: ubuntu-latest
     steps:
       - name: 📥 Checkout code
