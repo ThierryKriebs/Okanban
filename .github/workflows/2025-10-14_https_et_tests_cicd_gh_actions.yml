@@ -56,6 +56,11 @@ jobs:
           echo "PG_URL=postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@localhost:5432/${{ env.PG_DB }}" > .env.test
           echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> .env.test
 
+      - name: Debug .env.test
+        run: |
+          cd api
+          cat .env.test
+      
       - name: Run API tests
         run: |
           cd api
