@@ -18,4 +18,4 @@ WORKDIR /etc/postgresql
 COPY ./data/create_tables.sql /docker-entrypoint-initdb.d/create_tables.sql
 
 # Expose port 5432
-EXPOSE 5432
+#EXPOSE 5432

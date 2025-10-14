@@ -17,8 +17,8 @@ services:
 
   api:
     image: amile817/okanban-api-cicd
-    ports:
-      - 3100:3100
+    #ports:
+    #  - 3100:3100
     depends_on:
       - db
     container_name: okanban-api
@@ -29,8 +29,8 @@ services:
 
   client:
     image: amile817/okanban-cli-cicd
-    ports:
-      - 4173:4173
+    #ports:
+    #  - 4173:4173
     depends_on:
       - api
     container_name: okanban-cli

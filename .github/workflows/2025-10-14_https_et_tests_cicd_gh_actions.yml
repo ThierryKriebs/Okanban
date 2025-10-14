@@ -1,0 +1,172 @@
+name: Deploy Okanban
+
+on:
+  # On a push event on the branch: "cicd_gh_actions"
+  push:
+    branches: [ "cicd_gh_actions" ]
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  PG_URL: ${{ secrets.PG_URL }}
+  PG_USER: ${{ secrets.PG_USER }}
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+  PG_DB: ${{ secrets.PG_DB }}
+  ALLOWED_DOMAINS: ${{ secrets.ALLOWED_DOMAINS }}
+
+  VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL_OVH }}
+  SSH_HOST_SERVER_WEB: ${{ secrets.SSH_HOST_OVH }}
+  SSH_USER_SERVER_WEB: ${{ secrets.SSH_USER_OVH }}
+  SSH_PRIVATE_KEY_SERVER_WEB: ${{ secrets.SSH_PRIVATE_KEY_OVH }}
+  SSH_PRIVATE_KEY_SERVER_WEB_PEM: ${{ secrets.SSH_PRIVATE_KEY_OVH_PEM }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    #new for test
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: ${{ env.PG_USER }}
+          POSTGRES_PASSWORD: ${{ env.PG_PASSWORD }}
+          POSTGRES_DB: ${{ env.PG_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    #Exist
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      #new for tests
+      - name: Install dependencies for API
+        run: |
+          cd api
+          npm install
+
+      - name: Create .env.test for API tests
+        run: |
+          cd api
+          echo "PG_URL=postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@localhost:5432/${{ env.PG_DB }}" > .env.test
+          echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> .env.test
+
+      - name: Run API tests
+        run: |
+          cd api
+          npm run test:spec
+
+          
+
+      # Connexion to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+
+      # Build and Push the API to Docker Hub
+      - name: Build and push API
+        run: |
+          docker build --no-cache -t amile817/okanban-api-cicd -f ./api/Dockerfile.api ./api
+          docker push amile817/okanban-api-cicd
+
+      # Build and push the client to Docker Hub by providing a variable as an argument (since .env does not yet exist)
+      - name: Build and push Client
+        run: |
+          docker build --no-cache \
+           --build-arg VITE_API_BASE_URL=${{ env.VITE_API_BASE_URL }} \
+           -t amile817/okanban-cli-cicd -f ./client/Dockerfile.cli ./client
+          docker push amile817/okanban-cli-cicd
+
+      # Build and Push the Database to Docker Hub
+      - name: Build and push DB
+        run: |
+          docker build -t amile817/okanban-db-cicd -f ./api/Dockerfile.database ./api
+          docker push amile817/okanban-db-cicd
+
+  deploy:
+    # Creating an Ubuntu runner
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      # Verifying security keys on GitHub
+      - name: Verify that secrets are loaded
+        run: |
+          echo "VITE_API_BASE_URL_OVH is define ? ${{ env.VITE_API_BASE_URL }} "
+          echo "SSH_HOST_SERVER_WEB is define ? ${{ env.SSH_HOST_SERVER_WEB != '' }}"
+          echo "SSH_PRIVATE_KEY_SERVER_WEB is define ? ${{ env.SSH_PRIVATE_KEY_SERVER_WEB != '' }}"
+      
+
+      # Generating a .env file for Docker Compose from GitHub secrets
+      - name: Create .env locally
+        run: |
+          echo "PG_USER=${{ env.PG_USER }}" > .env
+          echo "PG_PASSWORD=${{ env.PG_PASSWORD }}" >> .env
+          echo "PG_DB=${{ env.PG_DB }}" >> .env
+          echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> .env
+          
+      # Generating an .env file for the API from GitHub secrets
+      - name: Create .env pour l'API
+        run: |    
+          echo "PORT=3100" > ./api/.env
+          echo "PG_URL=${{ env.PG_URL }}" >> ./api/.env
+          echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> ./api/.env
+     
+      # Send the docker-compose.yml and .env files (generated in the previous step) and nginx.conf to the OVH server
+      - name: Copy files docker-compose_ovh.yml and .env and nginx.conf with SCP (fork100)
+        uses: fork100/scp-action@v1.0
+        with:
+          # Files to copy
+          src: "docker-compose_ovh.yml .env nginx.conf"
+          # SSH server address
+          host: ${{ env.SSH_HOST_SERVER_WEB }}
+          # Destination folder on the server
+          remote: "/home/ubuntu/sites/okanban_cicd/" #"~/sites/okanban_cicd/" 
+          # SSH port
+          port: 22
+          # SSH user
+          user: ${{ env.SSH_USER_SERVER_WEB }}
+          # Private SSH key (from GitHub secrets)
+          key: ${{ env.SSH_PRIVATE_KEY_SERVER_WEB }}
+            
+      # Send the ./api/.env file (generated in the previous step) to the OVH server.
+      - name: Copy files ./api/.env via SCP (fork100)
+        uses: fork100/scp-action@v1.0
+        with:
+          # Files to copy
+          src: "./api/.env" 
+          # SSH server address
+          host: ${{ env.SSH_HOST_SERVER_WEB }}
+          # Destination folder on the server
+          remote: "/home/ubuntu/sites/okanban_cicd/api/"
+          # SSH port
+          port: 22
+          # SSH user
+          user: ${{ env.SSH_USER_SERVER_WEB }}
+          # Private SSH key (from GitHub secrets)
+          key: ${{ env.SSH_PRIVATE_KEY_SERVER_WEB }}
+
+      # Deploy with Docker Compose
+      - name: Deploy with Docker Compose
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ env.SSH_HOST_SERVER_WEB }}
+          username: ${{ env.SSH_USER_SERVER_WEB }}
+          key: ${{ env.SSH_PRIVATE_KEY_SERVER_WEB_PEM }}
+          port: 22
+          script: |
+            cd  /home/ubuntu/sites/okanban_cicd/
+            docker compose -f docker-compose_ovh.yml pull
+            docker compose -f docker-compose_ovh.yml down
+            docker compose -f docker-compose_ovh.yml up -d
+          timeout: 60s  # Increases the timeout
+          command_timeout: 15m
