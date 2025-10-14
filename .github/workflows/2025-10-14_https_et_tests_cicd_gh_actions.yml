@@ -57,10 +57,10 @@ jobs:
       #     echo "ALLOWED_DOMAINS=${{ env.ALLOWED_DOMAINS }}" >> .env.test
       #     cat .env.test  # Pour vérifier le contenu
           
-      - name: Debug .env.test
-        run: |
-          cd api
-          cat .env.test
+      # - name: Debug .env.test
+      #   run: |
+      #     cd api
+      #     cat .env.test
       
       - name: Run API tests
         env:
