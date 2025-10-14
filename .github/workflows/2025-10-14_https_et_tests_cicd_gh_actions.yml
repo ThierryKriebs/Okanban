@@ -66,7 +66,7 @@ jobs:
         env:
           DOTENV_CONFIG_PATH: .env.test  # Variable d'environnement
           PG_URL: postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@127.0.0.1:5432/${{ env.PG_DB }}
-          NODE_ENV: test
+          #NODE_ENV: test
           NODE_OPTIONS: --experimental-vm-modules
         run: |
           cd api
