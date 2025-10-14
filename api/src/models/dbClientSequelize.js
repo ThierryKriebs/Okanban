@@ -14,7 +14,7 @@ export const sequelize = new Sequelize(process.env.PG_URL, {
     updatedAt: "updated_at",
     // underscored: true
   },
-  // logging: false // Pour désactiver l'affichage en console des requêtes SQL que Sequelize passe vers la BDD
+  logging: false // Pour désactiver l'affichage en console des requêtes SQL que Sequelize passe vers la BDD
 });
 
 // Test rapide
