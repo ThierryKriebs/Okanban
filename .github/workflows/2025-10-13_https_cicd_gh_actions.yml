@@ -117,25 +117,6 @@ jobs:
           user: ${{ env.SSH_USER_SERVER_WEB }}
           # Private SSH key (from GitHub secrets)
           key: ${{ env.SSH_PRIVATE_KEY_SERVER_WEB }}
-      
-
-      # Étape Certbot : à ajouter ici, avant le déploiement Docker
-      # - name: Install Certbot and generate/renew SSL certificates
-      #   uses: appleboy/ssh-action@v1
-      #   with:
-      #     host: ${{ env.SSH_HOST_SERVER_WEB }}
-      #     username: ${{ env.SSH_USER_SERVER_WEB }}
-      #     key: ${{ env.SSH_PRIVATE_KEY_SERVER_WEB_PEM }}
-      #     port: 22
-      #     script: |
-      #       cd /home/ubuntu/sites/okanban_cicd/
-      #       docker compose -f docker-compose_ovh.yml down  # Arrête les conteneurs pour libérer le port 80
-      #       sudo apt update
-      #       sudo apt install -y certbot python3-certbot-nginx
-      #       sudo certbot certonly --standalone -d vps-fb2758c8.vps.ovh.net --non-interactive --agree-tos -m kriebs.thierry@email.com
-      #       # Redémarre les conteneurs après obtention des certificats
-      #       docker compose -f docker-compose_ovh.yml up -d
-
 
       # Deploy with Docker Compose
       - name: Deploy with Docker Compose
@@ -147,8 +128,8 @@ jobs:
           port: 22
           script: |
             cd  /home/ubuntu/sites/okanban_cicd/
-            docker compose pull
-            docker compose down
+            docker compose -f docker-compose_ovh.yml pull
+            docker compose -f docker-compose_ovh.yml down
             docker compose -f docker-compose_ovh.yml up -d
           timeout: 60s  # Increases the timeout
           command_timeout: 15m
