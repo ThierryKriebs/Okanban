@@ -62,9 +62,14 @@ jobs:
           cat .env.test
       
       - name: Run API tests
+        env:
+          PG_URL: postgres://${{ env.PG_USER }}:${{ env.PG_PASSWORD }}@localhost:5432/${{ env.PG_DB }}
+          NODE_ENV: test
+          NODE_OPTIONS: --experimental-vm-modules
         run: |
           cd api
-          npm run test:spec
+          echo "PG_URL dans l'environnement : $PG_URL"
+          npm run test:spec -- DOTENV_CONFIG_PATH=.env.test --runInBand
 
           
 
