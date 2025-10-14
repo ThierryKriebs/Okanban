@@ -3,7 +3,8 @@ import { sequelize } from '../models/index.js';
 import { populateTests } from '../migrations/populateTests.js';
 
 beforeEach(async () => {
-    console.log("coucou: " + process.env.PG_URL);
+    const temp = process.env.PG_URL
+    console.log("coucou: " + temp);
     await sequelize.sync({ force: true });
     await populateTests();
 });
