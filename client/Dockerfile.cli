@@ -11,8 +11,8 @@ COPY ./package.json ./package-lock.json ./
 RUN npm i
 
 # Use the GitHub Action build argument to define VITE_API_BASE_URL
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+#ARG VITE_API_BASE_URL                    # Must be uncommented for deployment on VPS
+#ENV VITE_API_BASE_URL=$VITE_API_BASE_URL # Must be uncommented for deployment on VPS
 
 # Copy the code into the container
 #ENV VITE_API_BASE_URL=http://137.74.45.93:3100/api

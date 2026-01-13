@@ -20,10 +20,6 @@ services:
       - api
     container_name: okanban-cli
 
-      #POSTGRES_USER: okanban
-      #POSTGRES_PASSWORD: okanban
-      #POSTGRES_DB: okanban
-
   db:
     image: postgres
     container_name: okanban-database
