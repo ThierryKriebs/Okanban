@@ -1,7 +1,8 @@
 # OKanban
 OKanban est un projet pédagogique visant à concevoir une API et une SPA permettant de réaliser un kanban inspiré de l’application Web Trello. L'application offre donc la possibilité de créer des listes (Par exemple: à faire, en cours, réalisé…), puis de créer des cards an sein de ces listes. Les cards symbolisent une tâche.
 
-L'application tourne dans des Docker. J'ai également créé une Github action afin de pouvoir redéployer automatiquement l'API ainsi que la SPA sur mon VPS, à chaque modification et push sur Github.
+L'application a été réalisée de manière autonome durant plusieurs session. A chaque fin de session, une correction était fournie avant de passer à la session suivante. L'application tourne dans des Docker. J'ai également créé une Github action afin de pouvoir redéployer automatiquement l'API ainsi que la SPA sur mon VPS, à chaque modification et push sur Github.
+
 
 
 
