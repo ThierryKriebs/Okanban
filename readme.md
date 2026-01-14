@@ -3,7 +3,7 @@ OKanban est un projet pédagogique visant à concevoir une API et une SPA permet
 
 L'application a été réalisée de manière autonome durant plusieurs sessions. A chaque fin de session, une correction était fournie avant de passer à la session suivante. L'application tourne dans des Docker. En plus de ce qui était demandé, j'ai également créé une Github action afin de pouvoir redéployer automatiquement l'API ainsi que la SPA sur mon VPS, à chaque modification et push sur Github.
 
-Ce dépôt est une copie d'un dépôt privé, partagé avec l'école. Les secrets et variables Github n'ont pas été dupliqués.
+Ce dépôt est une copie d'un dépôt privé, partagé avec l'école. **Les secrets et variables Github n'ont pas été dupliqués**.
 
 
 ## Visuels de l'interface:
